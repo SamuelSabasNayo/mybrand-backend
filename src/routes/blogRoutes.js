@@ -1,14 +1,17 @@
 import Router from 'express';
 import blogController from '../controllers/blogControlller';
+import auth from '../middlewares/authenticateUser';
 
 const router = Router();
 
-router.get('/', blogController.blog_index);
+router.get('/', blogController.blog_get);
 
-router.post('/', blogController.blog_create_post);
+router.get('/:id', blogController.blog_getOne);
 
-router.put('/:id', blogController.blog_update);
+router.post('/', auth.authUser, blogController.blog_post);
 
-router.delete('/:id', blogController.blog_delete);
+router.put('/:id', auth.authUser, blogController.blog_update);
+
+router.delete('/:id', auth.authUser, blogController.blog_delete);
 
 export default router;

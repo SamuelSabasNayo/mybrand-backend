@@ -1,22 +1,25 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import config from './config/config';
+import morgan from 'morgan';
 import bodyParser from 'body-parser';
 
-import allRoutes from './routes/blogRoutes';
+import blogRoutes from './routes/blogRoutes';
+import authRoutes from './routes/authRoutes';
+import queryRoutes from './routes/queryRoutes';
 
-const basePath = '/blogs';
 
 // express app
 const app = express();
 
-dotenv.config();
-
 
 // connect to mongoDB
-const dbURL = config.DATABASE_URL;
-mongoose.connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true});
+const DATABASE_URL = config.DATABASE_URL;
+mongoose.connect(DATABASE_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex:true
+});
 mongoose.connection.on('connected', () => {
     console.log('Connected to mongoDB');
 });
@@ -26,12 +29,16 @@ mongoose.connection.on('error', (err) => {
 })
 
 // add middleware
+app.use(morgan('dev'));
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 
+
 // blog routes
-app.use(basePath, allRoutes);
+app.use('/blogs', blogRoutes);
+app.use('/users', authRoutes);
+app.use('/queries', queryRoutes);
 
 // error handling middleware
 app.use((err, req, res, next) => {
