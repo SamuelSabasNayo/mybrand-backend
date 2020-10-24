@@ -1,4 +1,5 @@
 import User from '../models/user';
+import Blog from '../models/blog';
 import generateToken from '../helpers/generateToken';
 import hashpassword from '../helpers/passwordHarsh';
 
@@ -62,8 +63,23 @@ exports.user_delete = async (req, res, next) => {
         const existUser = await User.find({ _id: id });
         if (existUser.length) {
             try {
-                const deletedUser = await User.deleteOne({ _id: id });
-                res.status(200).send(`User is deleted ${existUser}`);
+                // const deletedUser = await User.deleteOne({ _id: id });
+                
+                const hisBlogs = await Blog.find({ author: { _id: '5f91212187e7db03c2782c44' } }).sort({ createdAt: -1 });
+                // const hisBlogs = await Blog.find({ _id: "5f9120880d2ec0037514381d" }).sort({ createdAt: -1 });
+                
+                // hisBlogs.forEach((blogs) => {
+                //     const blogAuthor = blogs.author;
+                //     const authorId = blogAuthor._id;
+                    
+                //     if (!authorId === id) return res.status(404).json(`No corresponding blogs.`)
+                //     console.log(blogs)
+                //     // const deleteBlogs = await Blog.deleteOne({  });
+                //     console.log(authorId);
+                // });
+                
+                    console.log(hisBlogs);
+                res.status(200).send({ 'User is deleted': existUser, hisBlogs});
             }
             catch (error) {
                 throw new Error(error);
