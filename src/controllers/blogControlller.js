@@ -27,10 +27,22 @@ exports.blog_getOne = async (req, res, next) => {
 // add a blog to the db
 exports.blog_post = async (req, res, next) => {
     try {
-    const owner = req.user;
-    console.log(owner);
-        const blog = await Blog.create(req.body);
-        res.status(200).send(blog);
+        const { _id, name } = req.user;
+    
+        const { title, content } = req.body;
+
+        const blog = await Blog.findOne({ title });
+        
+        if (blog) return res.status(400).json(`Blog already exist.`)
+        
+        const newBlog = new Blog({
+            title,
+            author: { _id, name },
+            content
+        });
+        const addedBlog = await Blog.create(newBlog);
+
+        return res.status(201).json(addedBlog);
     }
     catch (error) {
         res.status(400).json(`Error: ${error}`);

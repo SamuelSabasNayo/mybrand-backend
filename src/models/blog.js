@@ -5,6 +5,10 @@ const blogSchema = mongoose.Schema({
       type: String,
       required: true
     },
+    author: {
+      _id: mongoose.Schema.Types.ObjectId,
+      name: String
+    },
   
     content: {
       type: String,

@@ -30,18 +30,3 @@ exports.authAdmin = (req, res, next) => {
     
     return next();
 };
-
-
-// exports.verify = (req, res, next) => {
-//     const authorization = req.headers['authorization'];
-//     const token = authorization && authorization.split(' ')[1];
-    
-//     if (!token) return res.status(401).json({ error: 'Please login.' });
-//     jwt.verify(token, SECRET_KEY, (err, user) => {
-        
-//         if (err) return res.status(403).json({ error: 'Invalid token' });
-//         console.log(user);
-//         req.user = user;
-//         next();
-//     });
-// };
