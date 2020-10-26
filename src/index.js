@@ -12,13 +12,8 @@ import queryRoutes from './routes/queryRoutes';
 // express app
 const app = express();
 
-// const mongDB = process.env.NODE_ENV == 'test'
-// ? process.env.TESTDB
-// : process.env.DB;
-
 // connect to mongoDB
-const DATABASE_URL = config.DATABASE_URL_TEST;
-// const DATABASE_URL = config.DATABASE_URL;
+const DATABASE_URL = config.DATABASE_URL;
 mongoose.connect(DATABASE_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -40,16 +35,13 @@ app.use(express.urlencoded({ extended: true }));
 
 
 // routes
+app.use('/', (req, res) => {
+    res.status(200).json(`Welcome to Samuel-mybrand Website!`)
+});
 app.use('/blogs', blogRoutes);
 app.use('/users', authRoutes);
 app.use('/queries', queryRoutes);
 
-
-// error handling middleware
-// app.use((err, req, res, next) => {
-//     res.status(422).send({ error: err.message });
-//     // console.log(err);
-// });
 
 // app listening
 const PORT = config.PORT;

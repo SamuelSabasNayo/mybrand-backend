@@ -1,7 +1,8 @@
+/* eslint-disable no-undef */
 import Query from '../models/query';
 
 // get list of all users from db
-exports.query_get = async (req, res, next) => {
+exports.query_get = async (req, res) => {
     try {
         const queries = await Query.find().sort({ createdAt: -1 });
         res.status(200).json({ queries });
@@ -13,7 +14,7 @@ exports.query_get = async (req, res, next) => {
 };
 
 // get a single query from db
-exports.query_getOne = async (req, res, next) => {
+exports.query_getOne = async (req, res) => {
     try {
         const id = req.params.id;
         
@@ -26,7 +27,7 @@ exports.query_getOne = async (req, res, next) => {
 };
 
 // add a query to the db
-exports.query_post = async (req, res, next) => {
+exports.query_post = async (req, res) => {
     try {
         const query = await Query.create(req.body);
         res.status(200).send(query);
@@ -39,7 +40,7 @@ exports.query_post = async (req, res, next) => {
 // update a query is not necessary
 
 // delete a query from the db
-exports.query_delete = async (req, res, next) => {
+exports.query_delete = async (req, res) => {
     let { id } = req.params;
     if (id) {
         try {
@@ -48,16 +49,17 @@ exports.query_delete = async (req, res, next) => {
         if (existQuery.length) {
             console.log(existQuery);
             console.log('Going to delete a query');
+                // eslint-disable-next-line no-unused-vars
                 const deletedQuery = await Query.deleteOne({ _id: id });
                 res.status(200).send(`Query is deleted ${existQuery}`);
             } else {
                 res.status(404).json({ status: 403, error: 'Query Id does not exist' });
-            };
+            }
         }
             catch (error) {
                 throw new Error(error);
-            };
+            }
     } else {
         res.status(403).json({ status: 403, error: 'Invalid query Id' });
-    };
+    }
 };

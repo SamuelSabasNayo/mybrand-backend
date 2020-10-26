@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import User from '../models/user';
 import Blog from '../models/blog';
 import generateToken from '../helpers/generateToken';
@@ -5,7 +6,7 @@ import hashpassword from '../helpers/passwordHarsh';
 
 
 // signup a user
-exports.user_signup = async (req, res, next) => {
+exports.user_signup = async (req, res) => {
     const user = { name: req.body.name, email: req.body.email, password: req.body.password };
     
     const token = generateToken.generate_token(user);
@@ -28,11 +29,11 @@ exports.user_signup = async (req, res, next) => {
     }
     catch (error) {
         res.status(400).json(`User not created. Error: ${ error.message }`);
-    };
+    }
 };
 
 // get a single user from db
-exports.user_getOne = async (req, res, next) => {
+exports.user_getOne = async (req, res) => {
     try {
         const id = req.params.id;
         
@@ -45,19 +46,19 @@ exports.user_getOne = async (req, res, next) => {
 };
 
 // get list of all users from db
-exports.user_get = async (req, res, next) => {
+exports.user_get = async (req, res) => {
     try {
         const users = await User.find().sort({ createdAt: -1 });
         res.status(200).json({ users });
         
     }
     catch (error) {
-        res.status(400).json(`Error: ${err}`);
+        res.status(400).json(`Error: ${error}`);
     }
 };
 
 // delete a user from the db
-exports.user_delete = async (req, res, next) => {
+exports.user_delete = async (req, res) => {
     let { id } = req.params;
     if (id) {
         const existUser = await User.find({ _id: id });
@@ -65,8 +66,8 @@ exports.user_delete = async (req, res, next) => {
             try {
                 // const deletedUser = await User.deleteOne({ _id: id });
                 
-                const hisBlogs = await Blog.find({ author: { _id: '5f91212187e7db03c2782c44' } }).sort({ createdAt: -1 });
-                // const hisBlogs = await Blog.find({ _id: "5f9120880d2ec0037514381d" }).sort({ createdAt: -1 });
+                // const hisBlogs = await Blog.find({ author: { _id: '5f91212187e7db03c2782c44' } }).sort({ createdAt: -1 });
+                const hisBlogs = await Blog.find({ _id: "5f8fdb0cb30baf65857662ac" }).sort({ createdAt: -1 });
                 
                 // hisBlogs.forEach((blogs) => {
                 //     const blogAuthor = blogs.author;
@@ -78,17 +79,17 @@ exports.user_delete = async (req, res, next) => {
                 //     console.log(authorId);
                 // });
                 
-                    console.log(hisBlogs);
+                    // console.log(hisBlogs);
                 res.status(200).send({ 'User is deleted': existUser, hisBlogs});
             }
             catch (error) {
                 throw new Error(error);
-            };
+            }
         } else {
-            res.status(404).json({ status: 403, error: 'User Id does not exist' });
-        };
+            res.status(404).json({ status: 404, error: 'User Id does not exist' });
+        }
     } else {
         res.status(403).json({ status: 403, error: 'Invalid user Id' });
-    };
+    }
     
 };
