@@ -40,6 +40,9 @@ app.use(express.urlencoded({ extended: true }));
 
 
 // routes
+app.use('/', (req, res) => {
+    res.status(200).json(`Welcome to Samuel Mybrand Website.`);
+});
 app.use('/blogs', blogRoutes);
 app.use('/users', authRoutes);
 app.use('/queries', queryRoutes);
