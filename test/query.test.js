@@ -1,19 +1,18 @@
 /* eslint-disable no-undef */
-// import jest from 'jest';
 import request from 'supertest';
 import mongoose from 'mongoose';
 import config from '../src/config/config';
 import generateToken from '../src/helpers/generateToken';
-import Blog from '../src/models/blog';
+import Query from '../src/models/query';
 import app from '../src/app';
 
 const DATABASE_URL = config.DATABASE_URL_TEST;
 
 jest.useFakeTimers();
 
-describe('Testing Blogs Endpoints', () => {
+describe('Testing Query Endpoints', () => {
 
-    describe('Get Blogs Endpoint', () => {
+    describe('Get all queries Endpoint', () => {
         beforeAll(() => {
             mongoose.connect(DATABASE_URL, {
                 useNewUrlParser: true,
@@ -35,31 +34,30 @@ describe('Testing Blogs Endpoints', () => {
             token = generateToken.generate_token(user1);
         });
         
-        afterEach(async () => await Blog.deleteMany());
+        afterEach(async () => await Query.deleteMany());
         
-        it('Get a list of all blogs from db', async (done) => {
+        it('Get a list of all queries from db', async (done) => {
             const res = await request(app)
-                .get('/blogs')
+                .get('/queries')
                 .set('auth-token', token);
                 
             expect(res.status).toEqual(200);
             done();
         });
         
-        it('Get a single blog from db', async (done) => {
+        it('Get a single query from db', async (done) => {
             // eslint-disable-next-line no-unused-vars
-            const blog1 = {
-                    title: 'Blog 1',
-                    author: 'Bobo Barba',
-                    content: 'This is blog 1'
-                };
-                
-                const newBlog = await Blog(blog1); 
-                const addedBlog = await newBlog.save();
-                const id = addedBlog._id;
+            const query1 = {
+                    name: 'Bobo Barba',
+                    email: 'bobo@bob.com',
+                    query: 'This is query 1'
+            };
+                const newQuery = await Query(query1);
+                const addedQuery = await newQuery.save();
+                const id = addedQuery._id;
                 
             const res = await request(app)
-                .get(`/blogs/${id}`)
+                .get(`/queries/${id}`)
                 .set('auth-token', token);
                 
             expect(res.status).toEqual(200);
@@ -67,7 +65,7 @@ describe('Testing Blogs Endpoints', () => {
         });
     });
     
-    describe('Add a blog Endpoint', () => {
+    describe('Add a query Endpoint', () => {
         beforeAll(() => {
             mongoose.connect(DATABASE_URL, {
                 useNewUrlParser: true,
@@ -77,7 +75,7 @@ describe('Testing Blogs Endpoints', () => {
         });
         
         let token;
-        let blog;
+        let query;
         
         beforeEach( async () => {
             const user1 = {
@@ -87,43 +85,41 @@ describe('Testing Blogs Endpoints', () => {
                 password: 'Test123.'
             };
             
-            blog = {
-                title: 'Blog 1',
-                author: user1.name,
-                content: 'This is blog 1'
+            query = {
+                name: user1.name,
+                email: user1.email,
+                query: 'This is query 1'
             };
             
             token = generateToken.generate_token(user1);
         });
         
-        afterEach(async () => await Blog.deleteMany());
+        afterEach(async () => await Query.deleteMany());
         
-        it('Add a blog', async (done) => {
-            const res = await request(app)
-                .post('/blogs')
+        it('Add a query', async (done) => {
+            await request(app)
+                .post('/queries')
                 .set('auth-token', token)
-                .send(blog);
+                .send(query);
                 
-            expect(blog).not.toBe(null);
-            expect(res.status).toBe(201);
+            expect(query).not.toBe(null);
             done();
         });
         
-        it('For an existing blog, it should return status code of 400', async (done) => {
-            const blog1 = {
-                title: 'Blog 1',
-                author: 'Bobo Barba',
-                content: 'This is blog 1'
-            };
-            
-            const newBlog = await Blog(blog1);
-            await newBlog.save();
+        it('For an existing query, it should return status code of 400', async (done) => {
+            const query1 = {
+                name: 'Bobo Marley',
+                email: 'bobo@bob.com',
+                query: 'This is query 1'
+            }
+            const newQuery = await Query(query1);
+            await newQuery.save();
             
             const res = await request(app)
-                .post('/blogs')
+                .post('/queries')
                 .set('auth-token', token)
                 .send({
-                    title: 'Blog 1'
+                    title: 'Yhis is query 1'
                 });
                 
             expect(res.status).toEqual(400);
@@ -131,7 +127,7 @@ describe('Testing Blogs Endpoints', () => {
         });
     });
     
-    describe('Delete a Blog Endpoint', () => {
+    describe('Delete a user Endpoint', () => {
         beforeAll(() => {
             mongoose.connect(DATABASE_URL, {
                 useNewUrlParser: true,
@@ -147,39 +143,44 @@ describe('Testing Blogs Endpoints', () => {
                 _id: mongoose.Types.ObjectId().toHexString(),
                 name: 'Bobo Marley',
                 email: 'bobo@bob.com',
-                password: 'Test123.'
+                password: 'Test123.',
+                admin: false
             };
+            
+            // await request(app)
+            //     .post('/users/signup')
+            //     .send(user1);
             
             token = generateToken.generate_token(user1);
         });
         
-        afterEach(async () => await Blog.deleteMany());
+        afterEach(async () => await Query.deleteMany());
         
-        it('Delete a blog from db', async (done) => {
-            const blog1 = {
-                title: 'Blog 1',
-                author: 'Bobo Barba',
-                content: 'This is blog 1'
+        it('Delete a query from db', async (done) => {
+            const query1 = {
+                name: 'Bobo Barba',
+                email: 'bobo@bob.com',
+                query: 'This is query 1'
             };
             
-            const newBlog = await Blog(blog1);
-            const addedBlog = await newBlog.save();
-            const id = addedBlog._id;
+            const newQuery = await Query(query1);
+            const addedQuery = await newQuery.save();
+            const id = addedQuery._id;
             
             const res = await request(app)
-                .delete(`/blogs/${id}`)
+                .delete(`/queries/${id}`)
                 .set('auth-token', token);
                 
             expect(res.status).toEqual(200);
             done();
-        });
+        // });
         
-        it('For unexisting blog, it should return status code of 500', async (done) => {
-            const res = await request(app)
-                .delete('/blogs/id')
-                .set('auth-token', token);
+        // it('For unexisting user, it should return status code of 500', async (done) => {
+        //     const res = await request(app)
+        //         .delete('/users/id')
+        //         .set('auth-token', token);
                 
-            expect(res.status).toEqual(500);
+        //     expect(res.status).toEqual(500);
             done();
         });
     });
