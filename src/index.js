@@ -7,6 +7,7 @@ import bodyParser from 'body-parser';
 import blogRoutes from './routes/blogRoutes';
 import authRoutes from './routes/authRoutes';
 import queryRoutes from './routes/queryRoutes';
+import commentRoutes from './routes/commentRoutes';
 
 
 // express app
@@ -41,6 +42,7 @@ app.use('/', (req, res) => {
 app.use('/blogs', blogRoutes);
 app.use('/users', authRoutes);
 app.use('/queries', queryRoutes);
+app.use('/comments', commentRoutes);
 
 
 // app listening

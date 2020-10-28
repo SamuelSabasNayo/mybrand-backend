@@ -2,7 +2,7 @@ import User from '../models/user';
 import bcrypt from 'bcryptjs';
 import generateToken from '../helpers/generateToken';
 
-class authUser {
+class UserLogin {
     static async user_login(req, res) {
         try {
             const user = { email: req.body.email, password: req.body.password };
@@ -21,8 +21,8 @@ class authUser {
         }
         catch (error) {
             return res.status(500).json(`Internal server error. Error: ${ error.message }`);
-        };
+        }
     }
 }
 
-export default authUser;
+export default UserLogin;

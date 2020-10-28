@@ -1,14 +1,9 @@
 import mongoose from 'mongoose';
 
 const querySchema = mongoose.Schema({
-    name: {
-        type: String,
-        required: true
-    },
-
-    email: {
-        type: String,
-        required: [true, 'Please enter an Email']
+    author: {
+        _id: mongoose.Schema.Types.ObjectId,
+        name: String
     },
     
     query: {

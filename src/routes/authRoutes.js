@@ -11,8 +11,8 @@ router.get('/', [auth.authUser, auth.authAdmin], authController.user_get);
 
 router.get('/:id', [auth.authUser, auth.authAdmin], authController.user_getOne);
 
-router.post('/signup', authController.user_signup);
-// router.post('/signup', validateUser.validate_user, authController.user_signup);
+// router.post('/signup', authController.user_signup);
+router.post('/signup', validateUser.validate_user, authController.user_signup);
 
 router.post('/login', loginController.user_login);
 
