@@ -36,14 +36,13 @@ app.use(express.urlencoded({ extended: true }));
 
 
 // routes
-app.use('/', (req, res) => {
-    res.status(200).json(`Welcome to Samuel-mybrand Website!`)
-});
 app.use('/blogs', blogRoutes);
 app.use('/users', authRoutes);
 app.use('/queries', queryRoutes);
 app.use('/comments', commentRoutes);
-
+app.use('/', (req, res) => {
+    res.status(200).json(`Welcome to Samuel-mybrand Website!`)
+});
 
 // app listening
 const PORT = config.PORT;
