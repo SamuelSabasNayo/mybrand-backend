@@ -29,13 +29,23 @@ exports.query_getOne = async (req, res) => {
 // add a query to the db
 exports.query_post = async (req, res) => {
     try {
-        const query = await Query.create(req.body);
-        res.status(200).send(query);
+        const { _id, name } = req.user;
+    
+        const { query } = req.body;
+        
+        const newQuery = new Query({
+            author: { _id, name },
+            query
+        });
+        const addedQuery = await Query.create(newQuery);
+
+        return res.status(201).json({ message: 'Query is added', addedQuery });
     }
     catch (error) {
         res.status(400).json(`Error: ${error}`);
     }
 };
+
 
 // update a query is not necessary
 
@@ -47,8 +57,6 @@ exports.query_delete = async (req, res) => {
         const existQuery = await Query.find({ _id: id });
         
         if (existQuery.length) {
-            console.log(existQuery);
-            console.log('Going to delete a query');
                 // eslint-disable-next-line no-unused-vars
                 const deletedQuery = await Query.deleteOne({ _id: id });
                 res.status(200).send(`Query is deleted ${existQuery}`);

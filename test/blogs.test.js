@@ -11,7 +11,7 @@ const DATABASE_URL = config.DATABASE_URL_TEST;
 
 jest.useFakeTimers();
 
-describe('Testing Blogs Endpoints', () => {
+describe('Testing Blogs Endpoints', () => { 
 
     describe('Get Blogs Endpoint', () => {
         beforeAll(() => {
@@ -45,6 +45,7 @@ describe('Testing Blogs Endpoints', () => {
             expect(res.status).toEqual(200);
             done();
         });
+        
         
         it('Get a single blog from db', async (done) => {
             // eslint-disable-next-line no-unused-vars
@@ -182,5 +183,61 @@ describe('Testing Blogs Endpoints', () => {
             expect(res.status).toEqual(500);
             done();
         });
+    });
+    
+    describe('Update a Blog Endpoint', () => {
+        beforeAll(() => {
+            mongoose.connect(DATABASE_URL, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true,
+                useCreateIndex:true
+            });
+        });
+        
+        let token;
+        
+        beforeEach( async () => {
+            const user1 = {
+                _id: mongoose.Types.ObjectId().toHexString(),
+                name: 'Bobo Marley',
+                email: 'bobo@bob.com',
+                password: 'Test123.'
+            };
+            
+            token = generateToken.generate_token(user1);
+        });
+        
+        afterEach(async () => await Blog.deleteMany());
+        
+        it('Update a blog from db', async (done) => {
+            const blog1 = {
+                title: 'Blog 1',
+                author: 'Bobo Barba',
+                content: 'This is blog 1'
+            };
+            
+            const newBlog = await Blog(blog1);
+            const addedBlog = await newBlog.save();
+            const id = addedBlog._id;
+            
+            const res = await request(app)
+                .put(`/blogs/${id}`)
+                .set('auth-token', token)
+                .send({
+                    
+                });
+                
+            expect(res.status).toEqual(200);
+            done();
+        });
+        
+        // it('For unexisting blog, it should return status code of 500', async (done) => {
+        //     const res = await request(app)
+        //         .put('/blogs/id')
+        //         .set('auth-token', token);
+                
+        //     expect(res.status).toEqual(500);
+        //     done();
+        // });
     });
 });

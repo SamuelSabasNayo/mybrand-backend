@@ -57,39 +57,40 @@ exports.user_get = async (req, res) => {
     }
 };
 
+// update a user from the db
+exports.user_update = async (req, res) => {
+    try {
+        // eslint-disable-next-line no-unused-vars
+        const user = await User.findByIdAndUpdate({ _id: req.params.id }, req.body);
+        const updatedUser = await User.findOne({ _id: req.params.id });
+        res.status(200).send(updatedUser);
+    }
+    catch (error) {
+        res.status(400).json(`Error: ${error}`);
+    }
+};
+
 // delete a user from the db
 exports.user_delete = async (req, res) => {
     let { id } = req.params;
-    if (id) {
+    
+    try {
         const existUser = await User.find({ _id: id });
+                
         if (existUser.length) {
-            try {
-                // const deletedUser = await User.deleteOne({ _id: id });
+            const deletedUser = await User.deleteOne({ _id: id });
+            
+            if (deletedUser) {
+                const hisBlogs = await Blog.deleteMany().where({ 'author._id': { $eq: id } });
                 
-                // const hisBlogs = await Blog.find({ author: { _id: '5f91212187e7db03c2782c44' } }).sort({ createdAt: -1 });
-                const hisBlogs = await Blog.find({ _id: "5f8fdb0cb30baf65857662ac" }).sort({ createdAt: -1 });
-                
-                // hisBlogs.forEach((blogs) => {
-                //     const blogAuthor = blogs.author;
-                //     const authorId = blogAuthor._id;
-                    
-                //     if (!authorId === id) return res.status(404).json(`No corresponding blogs.`)
-                //     console.log(blogs)
-                //     // const deleteBlogs = await Blog.deleteOne({  });
-                //     console.log(authorId);
-                // });
-                
-                    // console.log(hisBlogs);
-                res.status(200).send({ 'User is deleted': existUser, hisBlogs});
+                res.status(200).send({ status: 200, 'User is deleted': existUser, 'His blogs are deleted': hisBlogs });
             }
-            catch (error) {
-                throw new Error(error);
-            }
-        } else {
+        } 
+        else {
             res.status(404).json({ status: 404, error: 'User Id does not exist' });
         }
-    } else {
-        res.status(403).json({ status: 403, error: 'Invalid user Id' });
+        
+    } catch (error) {
+        throw new Error(error);
     }
-    
 };

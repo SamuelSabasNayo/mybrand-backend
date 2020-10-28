@@ -20,10 +20,9 @@ describe('Testing Signup Endpoints', () => {
             useCreateIndex:true
         })
     });
-    // let token;
+    
     afterEach(async () => await User.deleteMany());
     
-    // token = generateToken.generate_token(user1);
     // Create tests    
     it('Signup a user', async (done) => {        
         const res = await request(app)
@@ -51,7 +50,9 @@ describe('Testing Signup Endpoints', () => {
         const res = await request(app)
         .post('/users/signup')
         .send({
-            email: 'bobo@bob.com'
+            name: 'Bobo Marley',
+            email: 'bobo@bob.com',
+            password: 'Test123.'
         });
         
         expect(res.status).toBe(400);
